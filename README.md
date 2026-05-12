@@ -1,4 +1,4 @@
-# Medicare Provider Fraud Detection
+# Medicare Provider Anomaly Detection
 Tools: SQL · Amazon Athena · AWS S3
 Data Sources: CMS Medicare Physician & Other Practitioners (data.cms.gov), CMS Revoked Medicare Providers and Suppliers (data.cms.gov)
 
