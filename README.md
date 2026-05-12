@@ -1,6 +1,7 @@
 # Medicare Provider Anomaly Detection
 Tools: SQL · Amazon Athena · AWS S3
 Data Sources: CMS Medicare Physician & Other Practitioners (data.cms.gov), CMS Revoked Medicare Providers and Suppliers (data.cms.gov)
+Tableau Public Dashboard: https://public.tableau.com/app/profile/gabrielle.epelle/viz/MedicareAnomalyDetection/MedicareAnomalyDetection
 
 # Overview
 This project analyzes 9.6 million Medicare billing records across 1.17 million providers to identify anomalous billing patterns that may indicate fraud, waste, or abuse. Providers are scored using z-scores across three metrics and cross-referenced against CMS's list of revoked Medicare providers.
