@@ -20,16 +20,20 @@ Services per day z-score — total services divided by unique patient days vs sp
 Providers scoring above 3 standard deviations from their specialty mean on any signal were flagged as anomalies.
 
 # Key Findings
-1. Anomaly detection flagged a Physical Therapy cluster in California
-Three of the strongest multi-signal anomalies were Physical Therapists in California, flagged for extremely high services per patient and per day. Patrick Black (NPI: 1326439159) billed 15,467 services across only 250 patients — a services per patient z-score of 7.69 and services per day z-score of 21.81.
-2. Most extreme single outlier — 141 services per patient
-Migaela Reedy (NP, AZ) billed 1,702 services for only 12 patients — 141 services per patient, far exceeding any legitimate clinical pattern.
-3. Cross-validation against revoked providers
+1. Three of the strongest multi-signal anomalies were Physical Therapists in California, flagged for extremely high services per patient and per day. 
+2. Cross-validation against revoked providers
 Of 7,456 revoked Medicare providers, 4 overlapped with the billing dataset. At a z-score threshold of 3, one was caught — Aafiyah Solutions Inc (IL), flagged for high services per patient (z-score 4.71) and services per day (z-score 5.50), and subsequently revoked for on-site review violations and failure to report.
-4. Threshold analysis
-ThresholdProviders FlaggedRevoked Providers Caught3~hundreds1 of 4 (25%)250,638 (4.3%)1 of 4 (25%)
+
+## Threshold Analysis
+
+| Threshold | Providers Flagged | Revoked Providers Caught |
+|-----------|------------------|--------------------------|
+| 3 | ~hundreds | 1 of 4 (25%) |
+| 2 | 50,638 (4.3%) | 1 of 4 (25%) |
+
 Lowering the threshold to 2 increased noise significantly without improving detection of known bad actors, suggesting z-score > 3 is the more useful operational threshold.
-Limitations
+
+## Limitations
 
 Revocation records and billing data appear to be from different time periods, limiting cross-validation
 Revocation reasons include compliance and on-site violations not reflected in billing metrics — billing-only anomaly detection cannot catch all fraud types
