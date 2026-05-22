@@ -20,7 +20,7 @@ Services per day z-score — total services divided by unique patient days vs sp
 Providers scoring above 3 standard deviations from their specialty mean on any signal were flagged as anomalies.
 
 # Key Findings
-1. Three of the strongest multi-signal anomalies were Physical Therapists in California, flagged for extremely high services per patient and per day. 
+1. Three of the strongest multi-signal anomalies were Physical Therapists in California, flagged for extremely high services per patient and per day. This is consistent with documented enforcement actions by the DOJ, including a $15M fraud scheme involving LA-area physical therapy clinics billing for services never provided.
 2. Cross-validation against revoked providers
 Of 7,456 revoked Medicare providers, 4 overlapped with the billing dataset. At a z-score threshold of 3, one was caught — Aafiyah Solutions Inc (IL), flagged for high services per patient (z-score 4.71) and services per day (z-score 5.50), and subsequently revoked for on-site review violations and failure to report.
 
