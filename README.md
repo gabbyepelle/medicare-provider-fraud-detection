@@ -35,9 +35,9 @@ Lowering the threshold to 2 increased noise significantly without improving dete
 
 ## Limitations
 
-Revocation records and billing data appear to be from different time periods, limiting cross-validation
-Revocation reasons include compliance and on-site violations not reflected in billing metrics — billing-only anomaly detection cannot catch all fraud types
-High payment z-scores alone are not indicative of fraud — some specialties legitimately bill expensive procedures infrequently
+Revocation records and billing data appear to be from different time periods, limiting cross-validation. \
+Revocation reasons include compliance and on-site violations not reflected in billing metrics — billing-only anomaly detection cannot catch all fraud types.
+High payment z-scores alone are not indicative of fraud — some specialties legitimately bill expensive procedures infrequently.
 
 # Queries
 
