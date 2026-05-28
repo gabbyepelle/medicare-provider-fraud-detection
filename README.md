@@ -13,11 +13,11 @@ This project analyzes 9.6 million Medicare billing records across 1.17 million p
 Raw data stored in AWS S3, queried with Amazon Athena
 
 # Methodology
-Each provider was aggregated to a single row and scored against peers within their specialty using z-scores across three signals:
-Payment z-score — average Medicare payment per service vs specialty peers
-Services per patient z-score — total services divided by unique patients vs specialty peers
-Services per day z-score — total services divided by unique patient days vs specialty peers
-Providers scoring above 3 standard deviations from their specialty mean on any signal were flagged as anomalies.
+Each provider was aggregated to a single row and scored against peers within their specialty using z-scores across three signals: \
+Payment z-score — average Medicare payment per service vs specialty peers \
+Services per patient z-score — total services divided by unique patients vs specialty peers \
+Services per day z-score — total services divided by unique patient days vs specialty peers \
+Providers scoring above 3 standard deviations from their specialty mean on any signal were flagged as anomalies. 
 
 # Key Findings
 1. Three of the strongest multi-signal anomalies were Physical Therapists in California, flagged for extremely high services per patient and per day. This is consistent with documented enforcement actions by the DOJ, including a $15M fraud scheme involving LA-area physical therapy clinics billing for services never provided.
