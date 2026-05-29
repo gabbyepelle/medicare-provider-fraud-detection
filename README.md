@@ -1,4 +1,4 @@
-# Medicare Provider Anomaly Detection
+## Medicare Provider Anomaly Detection
 Tools: SQL · Amazon Athena · AWS S3
 Data Sources: CMS Medicare Physician & Other Practitioners (data.cms.gov), CMS Revoked Medicare Providers and Suppliers (data.cms.gov)
 Tableau Public Dashboard: https://public.tableau.com/app/profile/gabrielle.epelle/viz/MedicareAnomalyDetection/MedicareAnomalyDetection
@@ -37,7 +37,10 @@ flagged anomalies identified 12 confirmed matches at threshold 3, including:
   services
 - A Texas hematologist excluded in 2015 still appearing in billing data, suggesting 
   an enforcement gap
-## Threshold Analysis
+
+Of the 12 LEIE matches, exclusion reasons included program-related fraud convictions (1128a1, 5 cases), excessive or unnecessary services (1128b4, 2 cases), kickbacks and prohibited activities (1128a3, 2 cases), and license revocations (1128a4, 2 cases). The presence of 1128b4 exclusions — specifically for excessive billing — directly validates the billing-based anomaly detection approach.
+  
+# Threshold Analysis
 
 | Threshold | Providers Flagged | LEIE Matches |
 |-----------|------------------|--------------|
@@ -48,17 +51,19 @@ flagged anomalies identified 12 confirmed matches at threshold 3, including:
 Lowering the threshold from 3 to 2 increased flagged providers by 50,000+ but 
 identified only 1 additional LEIE match, confirming that z-score > 3 minimizes 
 false positives while maintaining detection of known bad actors.
-## Limitations
-
-Revocation records and billing data appear to be from different time periods, limiting cross-validation. \
-Revocation reasons include compliance and on-site violations not reflected in billing metrics — billing-only anomaly detection cannot catch all fraud types.
-High payment z-scores alone are not indicative of fraud — some specialties legitimately bill expensive procedures infrequently.
 
 # Queries
 
 - 01_exploration.sql — row counts, unique providers, specialty distribution
 - 02_anomaly_detection.sql — provider aggregation, z-score calculation, anomaly flagging
 - 03_validation.sql — join against revoked providers, threshold analysis
+
+# Limitations
+
+Revocation records and billing data appear to be from different time periods, limiting cross-validation. \
+Revocation reasons include compliance and on-site violations not reflected in billing metrics — billing-only anomaly detection cannot catch all fraud types.
+High payment z-scores alone are not indicative of fraud — some specialties legitimately bill expensive procedures infrequently.
+
 
 # Next Steps
 
