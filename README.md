@@ -20,19 +20,34 @@ Services per day z-score — total services divided by unique patient days vs sp
 Providers scoring above 3 standard deviations from their specialty mean on any signal were flagged as anomalies. 
 
 # Key Findings
-1. Three of the strongest multi-signal anomalies were Physical Therapists in California, flagged for extremely high services per patient and per day. This is consistent with documented enforcement actions by the DOJ, including a $15M fraud scheme involving LA-area physical therapy clinics billing for services never provided.
-2. Cross-validation against revoked providers
-Of 7,456 revoked Medicare providers, 4 overlapped with the billing dataset. At a z-score threshold of 3, one was caught — Aafiyah Solutions Inc (IL), flagged for high services per patient (z-score 4.71) and services per day (z-score 5.50), and subsequently revoked for on-site review violations and failure to report.
+**1. Anomaly detection flagged a Physical Therapy cluster in California**
+Three of the strongest multi-signal anomalies were Physical Therapists in California, 
+flagged for extremely high services per patient and per day. This is consistent 
+with documented DOJ enforcement actions targeting LA-area physical therapy clinics 
+for billing services never provided.
 
+**2. Cross-validation against HHS OIG LEIE**
+Of 83,256 excluded entities on the LEIE, 8,608 had valid NPIs. Cross-referencing 
+flagged anomalies identified 12 confirmed matches at threshold 3, including:
+- A California psychiatrist excluded January 2025 with 49 services per patient 
+  (spp z-score: 14.25)
+- A New Jersey sports medicine physician excluded June 2025 with 64 services per 
+  patient and 40 services per day
+- A Montana emergency medicine physician excluded July 2025 with 163,155 total 
+  services
+- A Texas hematologist excluded in 2015 still appearing in billing data, suggesting 
+  an enforcement gap
 ## Threshold Analysis
 
-| Threshold | Providers Flagged | Revoked Providers Caught |
-|-----------|------------------|--------------------------|
-| 3 | ~hundreds | 1 of 4 (25%) |
-| 2 | 50,638 (4.3%) | 1 of 4 (25%) |
+| Threshold | Providers Flagged | LEIE Matches |
+|-----------|------------------|--------------|
+| 3 | ~hundreds | 12 |
+| 2 | 50,638 (4.3%) | 13 |
 
-Lowering the threshold to 2 increased noise significantly without improving detection of known bad actors, suggesting z-score > 3 is the more useful operational threshold.
 
+Lowering the threshold from 3 to 2 increased flagged providers by 50,000+ but 
+identified only 1 additional LEIE match, confirming that z-score > 3 minimizes 
+false positives while maintaining detection of known bad actors.
 ## Limitations
 
 Revocation records and billing data appear to be from different time periods, limiting cross-validation. \
@@ -41,9 +56,9 @@ High payment z-scores alone are not indicative of fraud — some specialties leg
 
 # Queries
 
-01_exploration.sql — row counts, unique providers, specialty distribution
-02_anomaly_detection.sql — provider aggregation, z-score calculation, anomaly flagging
-03_validation.sql — join against revoked providers, threshold analysis
+- 01_exploration.sql — row counts, unique providers, specialty distribution
+- 02_anomaly_detection.sql — provider aggregation, z-score calculation, anomaly flagging
+- 03_validation.sql — join against revoked providers, threshold analysis
 
 # Next Steps
 
