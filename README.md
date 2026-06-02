@@ -1,27 +1,27 @@
 # Medicare Provider Fraud Detection
-Tools: SQL · Amazon Athena · AWS S3
+**Stack:** AWS S3 · Amazon Athena · Python · scikit-learn · Tableau
 Data Sources: CMS Medicare Physician & Other Practitioners (data.cms.gov), CMS Revoked Medicare Providers and Suppliers (data.cms.gov) \
 Tableau Public Dashboard: https://public.tableau.com/app/profile/gabrielle.epelle/viz/MedicareAnomalyDetection/MedicareAnomalyDetection
 
 ## Overview
 
-This project builds a two-stage Medicare provider fraud detection pipeline 
-using CMS billing data, cloud infrastructure, and machine learning.
+Healthcare fraud costs the U.S. an estimated $100 billion annually, with 
+Medicare among the most targeted programs. This project was motivated by 
+academic research that used CMS billing data to detect fraudulent providers 
+through statistical anomaly detection and machine learning.
 
-**Stage 1** uses SQL anomaly detection in Amazon Athena to flag providers 
-whose billing patterns deviate significantly from specialty peers, scoring 
-1.17 million providers across three signals using z-scores.
+The analysis replicates and extends that methodology by:
+- Scaling to 9.6 million real Medicare billing records
+- Using three billing signals instead of one for anomaly scoring
+- Validating against the full HHS OIG LEIE rather than a subset
+- Testing multiple class ratios following published RUS methodology
+- Building an interactive Tableau dashboard for stakeholder communication
 
-**Stage 2** trains a logistic regression model using confirmed fraud labels 
-from the HHS OIG List of Excluded Individuals and Entities (LEIE), following 
-the random undersampling methodology from academic fraud detection research.
-
-Flagged anomalies are cross-referenced against both the CMS Revoked Medicare 
-Providers list and the full LEIE to validate detection accuracy. The project 
-identifies real excluded providers in the billing data, including several 
-excluded in 2024-2025 for excessive billing and program-related fraud.
-
-**Stack:** AWS S3 · Amazon Athena · Python · scikit-learn · Tableau
+All data is publicly available through CMS and the HHS Office of Inspector 
+General. Provider names and NPIs appear in public government records and are 
+included solely for analytical validation purposes. This project does not make 
+definitive fraud determinations. Anomaly detection flags providers for 
+further investigation, consistent with how real fraud detection systems operate.
 
 ## Dataset
 9,660,647 billing records
