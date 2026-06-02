@@ -1,25 +1,47 @@
-## Medicare Provider Fraud Detection
+# Medicare Provider Fraud Detection
 Tools: SQL · Amazon Athena · AWS S3
 Data Sources: CMS Medicare Physician & Other Practitioners (data.cms.gov), CMS Revoked Medicare Providers and Suppliers (data.cms.gov)
 Tableau Public Dashboard: https://public.tableau.com/app/profile/gabrielle.epelle/viz/MedicareAnomalyDetection/MedicareAnomalyDetection
 
-# Overview
+## Overview
 This project analyzes 9.6 million Medicare billing records across 1.17 million providers to identify anomalous billing patterns that may indicate fraud, waste, or abuse. Providers are scored using z-scores across three metrics and cross-referenced against CMS's list of revoked Medicare providers.
 
-# Dataset
+## Dataset
 9,660,647 billing records
 1,175,281 unique providers
 210 specialties
 Raw data stored in AWS S3, queried with Amazon Athena
 
-# Methodology
-Each provider was aggregated to a single row and scored against peers within their specialty using z-scores across three signals: \
-Payment z-score — average Medicare payment per service vs specialty peers \
-Services per patient z-score — total services divided by unique patients vs specialty peers \
-Services per day z-score — total services divided by unique patient days vs specialty peers \
-Providers scoring above 3 standard deviations from their specialty mean on any signal were flagged as anomalies. 
+## Methodology
 
-# Key Findings
+### Stage 1: SQL Anomaly Detection (Amazon Athena)
+Providers were aggregated from 9.6M billing records to one row per provider 
+and scored using z-scores across three signals vs specialty peers:
+- **Payment z-score** — average Medicare payment per service
+- **Services per patient z-score** — total services divided by unique patients
+- **Services per day z-score** — total services divided by unique patient days
+
+Providers scoring above 3 standard deviations from their specialty mean on 
+any signal were flagged as anomalies.
+
+### Stage 2: Supervised Learning (Python + scikit-learn)
+A logistic regression model was trained using LEIE exclusion status as labels, 
+following the random undersampling (RUS) methodology from academic fraud 
+detection research. Four class ratios (50:50, 65:35, 75:25, 80:20) were tested 
+across 10 runs each to ensure stability.
+
+| Class Ratio | Mean F1 | Std F1 | Mean AUC | Std AUC |
+|-------------|---------|--------|----------|---------|
+| 50:50 | 0.588 | 0.036 | 0.672 | 0.024 |
+| 65:35 | 0.229 | 0.045 | 0.665 | 0.019 |
+| 75:25 | 0.135 | 0.031 | 0.661 | 0.012 |
+| 80:20 | 0.107 | 0.024 | 0.655 | 0.011 |
+
+**Feature importance** showed `spp_zscore` as the strongest predictor 
+(coefficient: 0.417), independently validating the anomaly detection approach.
+
+
+## Key Findings
 **1. Anomaly detection flagged a Physical Therapy cluster in California**
 Three of the strongest multi-signal anomalies were Physical Therapists in California, 
 flagged for extremely high services per patient and per day. This is consistent 
@@ -39,8 +61,8 @@ flagged anomalies identified 12 confirmed matches at threshold 3, including:
   an enforcement gap
 
 Of the 12 LEIE matches, exclusion reasons included program-related fraud convictions (1128a1, 5 cases), excessive or unnecessary services (1128b4, 2 cases), kickbacks and prohibited activities (1128a3, 2 cases), and license revocations (1128a4, 2 cases). The presence of 1128b4 exclusions — specifically for excessive billing — directly validates the billing-based anomaly detection approach.
-  
-# Threshold Analysis
+
+## Threshold Analysis
 
 | Threshold | Providers Flagged | LEIE Matches |
 |-----------|------------------|--------------|
@@ -52,22 +74,30 @@ Lowering the threshold from 3 to 2 increased flagged providers by 50,000+ but
 identified only 1 additional LEIE match, confirming that z-score > 3 minimizes 
 false positives while maintaining detection of known bad actors.
 
-# Queries
+## Logistic Regression Validates Anomaly Detection Signals
+The supervised model achieved a mean AUC of 0.672 at a 50:50 class ratio which is  
+meaningfully above the 0.5 random baseline. Feature importance analysis 
+confirmed `spp_zscore` as the strongest predictor of LEIE exclusion 
+(coefficient: 0.417), independently validating that services per patient 
+relative to specialty peers is the most meaningful fraud signal.
+  
+
+## Queries
 
 - 01_exploration.sql — row counts, unique providers, specialty distribution
 - 02_anomaly_detection.sql — provider aggregation, z-score calculation, anomaly flagging
 - 03_validation.sql — join against revoked providers, threshold analysis
 
-# Limitations
+## Limitations
 
-Revocation records and billing data appear to be from different time periods, limiting cross-validation. \
-Revocation reasons include compliance and on-site violations not reflected in billing metrics — billing-only anomaly detection cannot catch all fraud types.
-High payment z-scores alone are not indicative of fraud — some specialties legitimately bill expensive procedures infrequently.
+- Only 198 confirmed LEIE matches limits supervised learning performance
+- Labels reflect exclusion status at time of LEIE download, not necessarily 
+  during the billing period
+- Logistic regression assumes linear relationships while ensemble methods like 
+  Random Forest may capture non-linear patterns better
 
+## Next Steps
 
-# Next Steps
-
-Incorporate OIG exclusions list for broader validation
-Build a supervised ML model in AWS SageMaker using revoked status as labels
-Add procedure-level analysis to flag billing for procedures unusual within a specialty
-
+- Train a Random Forest or Gradient Boosting model for comparison
+- Incorporate IQR-based anomaly scores as additional features
+- Expand labeled dataset using historical LEIE snapshots
